@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.pyc
+
+# Virtual environment
+myenv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Environment variables - never commit this
+.env
+
+# Data files - too large for git
+data/layoffs_data.csv
+data/layoffs_cleaned.csv
+data/master_dataset.csv
+data/ticker_mapping.csv
+data/simfin/
+data/financials.csv
+
+# Models - too large for git
+models/*.pkl
+models/*.json
+models/*.ubj
+
+# MLflow
+mlruns/
+mlflow_artifacts/
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
