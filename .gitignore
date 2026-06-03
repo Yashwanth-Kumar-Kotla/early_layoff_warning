@@ -17,13 +17,7 @@ env/
 # Environment variables - never commit this
 .env
 
-# Data files - too large for git
-data/layoffs_data.csv
-data/layoffs_cleaned.csv
-data/master_dataset.csv
-data/ticker_mapping.csv
-data/simfin/
-data/financials.csv
+
 
 
 
