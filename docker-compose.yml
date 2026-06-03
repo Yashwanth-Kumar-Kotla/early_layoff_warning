@@ -1,0 +1,48 @@
+
+services:
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: layoff_fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./mlruns:/app/mlruns
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: layoff_streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://fastapi:8000
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
+  mlflow:
+    image: python:3.12-slim
+    container_name: layoff_mlflow
+    working_dir: /app
+    volumes:
+      - ./mlruns:/app/mlruns
+    ports:
+      - "5001:5000"
+    environment:
+      - MLFLOW_ALLOW_FILE_STORE=true
+    command: >
+      bash -c "pip install mlflow &&
+               mlflow server
+               --host 0.0.0.0
+               --port 5000
+               --backend-store-uri /app/mlruns"
+    restart: unless-stopped
