@@ -212,6 +212,8 @@ def predict(request: PredictRequest):
         'Profit_Margin': fin_features['Profit_Margin'] if fin_features else 0.101995,
         'Revenue_Growth': fin_features['Revenue_Growth'] if fin_features else 0.018416
     }
+    late_stages = ['Series G', 'Series H', 'Series I', 'Series J', 'Subsidiary', 'Unknown']
+    features['Stage'] = 'Late Stage' if features['Stage'] in late_stages else features['Stage']
 
     features_df = pd.DataFrame([features])
 
@@ -282,6 +284,10 @@ def predict_batch(file: UploadFile = File(...)):
                 'Profit_Margin': fin_features['Profit_Margin'] if fin_features else 0.101995,
                 'Revenue_Growth': fin_features['Revenue_Growth'] if fin_features else 0.018416
             }
+
+            # Clean Stage - replace Unknown with Late Stage to match training data
+            late_stages = ['Series G', 'Series H', 'Series I', 'Series J', 'Subsidiary', 'Unknown']
+            features['Stage'] = 'Late Stage' if features['Stage'] in late_stages else features['Stage']
 
             features_df = pd.DataFrame([features])
             cat_cols = ['Industry', 'Stage', 'Country']
