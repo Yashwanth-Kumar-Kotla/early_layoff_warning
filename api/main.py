@@ -313,3 +313,15 @@ def predict_batch(file: UploadFile = File(...)):
             })
 
     return {'predictions': results, 'total': len(results)}
+
+@app.get('/debug')
+def debug():
+    return {
+        'encoder_categories': {
+            'Industry': encoder.categories_[0].tolist(),
+            'Stage': encoder.categories_[1].tolist(),
+            'Country': encoder.categories_[2].tolist()
+        },
+        'layoffs_rows': len(layoffs_df),
+        'ticker_mapping_rows': len(ticker_mapping)
+    }
