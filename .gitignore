@@ -25,10 +25,7 @@ data/ticker_mapping.csv
 data/simfin/
 data/financials.csv
 
-# Models - too large for git
-models/*.pkl
-models/*.json
-models/*.ubj
+
 
 # MLflow
 mlruns/
