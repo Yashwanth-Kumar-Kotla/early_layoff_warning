@@ -145,11 +145,17 @@ with tab1:
                 elif response.status_code == 404:
                     st.error(f"Company '{company_name}' not found. Try exact name from dataset.")
                 else:
-                    st.error(f"Error: {response.json().get('detail', 'Unknown error')}")
+                    try:
+                        st.error(f"Error: {response.json().get('detail', 'Unknown error')}")
+                    except:
+                        st.error("API is waking up, please wait 30 seconds and try again.")
                     
             except requests.exceptions.ConnectionError:
-                st.error("Cannot connect to API. Make sure FastAPI is running on port 8000.")
-
+                st.error("Cannot connect to API. Make sure FastAPI is running.")
+            except requests.exceptions.Timeout:
+                st.error("Request timed out. API may be waking up, try again in 30 seconds.")
+            except Exception as e:
+                st.error(f"Unexpected error: {str(e)}. Try again in 30 seconds.")
 with tab2:
     st.subheader('Batch Company Risk Analysis')
     st.markdown('Upload a CSV file with a `company_name` column to get predictions for multiple companies.')
