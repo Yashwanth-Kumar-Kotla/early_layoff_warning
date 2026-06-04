@@ -96,13 +96,13 @@ This generates real negatives from the same companies — no structural mismatch
 ### Features Used
 | Feature | Source | Importance |
 |---|---|---|
-| Revenue Growth (QoQ) | SimFin | ⭐⭐⭐⭐⭐ Most important |
-| Cash Reserves | SimFin | ⭐⭐⭐⭐ |
-| Profit Margin | SimFin | ⭐⭐⭐⭐ |
-| Industry | Layoffs dataset | ⭐⭐⭐ |
-| Funds Raised | Layoffs dataset | ⭐⭐⭐ |
-| Funding Stage | Layoffs dataset | ⭐⭐ |
-| Country | Layoffs dataset | ⭐ |
+| Revenue Growth (QoQ) | SimFin | 🔴 Critical |
+| Cash Reserves | SimFin | 🔴 Critical |
+| Profit Margin | SimFin | 🟠 High |
+| Industry | Layoffs dataset | 🟠 High |
+| Funds Raised | Layoffs dataset | 🟡 Medium |
+| Funding Stage | Layoffs dataset | 🟡 Medium |
+| Country | Layoffs dataset | 🟢 Low |
 
 ### Model
 ```
@@ -268,10 +268,13 @@ early_layoff_warning/
 
 ## Limitations & Honest Notes
 
-- **Dataset size:** 1,301 training rows — limited by public company SimFin coverage
+- **Dataset size:** 1,301 training rows, limited by public company SimFin coverage
 - **Data freshness:** SimFin free tier lags ~1–2 quarters behind real time
 - **Coverage:** Works best for US public tech companies in the layoffs dataset
-- **Model performance:** ROC-AUC 0.70 — meaningful signal but not production-grade
+- **Model performance:** ROC-AUC 0.70 trained on 1,301 rows,  
+  performance scales with data coverage. Current version focuses on 
+  public US tech companies; expanding to private company financials 
+  is on the roadmap.
 - **Cold starts:** Render free tier sleeps after 15 min inactivity — first request takes 30–60s
 
 ---
@@ -288,8 +291,9 @@ early_layoff_warning/
 ## Author
 
 **Yashwanth Kumar Kotla**
-MS Data Science — Webster University, Austin TX | Graduating December 2026
-F1 Visa | STEM OPT Eligible
+MS Data Science — Webster University, Austin TX 
+Graduating December 2026
+
 
 [GitHub](https://github.com/Yashwanth-Kumar-Kotla) · [LinkedIn](https://www.linkedin.com/in/yashwanthkumarkotla/)
 
