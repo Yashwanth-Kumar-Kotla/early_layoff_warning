@@ -1,4 +1,9 @@
-# ⚠️ Tech Layoff Early Warning System
+![GitHub last commit](https://img.shields.io/github/last-commit/Yashwanth-Kumar-Kotla/layoff-radar)
+![GitHub stars](https://img.shields..io/github/stars/Yashwanth-Kumar-Kotla/layoff-radar)
+![GitHub forks](https://img.shields.io/github/forks/Yashwanth-Kumar-Kotla/layoff-radar)
+
+# 📡 Layoff Radar
+### Predict tech company layoffs before they happen
 
 > Predict layoff risk for any tech company before it happens — powered by XGBoost, SHAP explainability, and live financial data.
 
