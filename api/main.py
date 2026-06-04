@@ -212,8 +212,20 @@ def predict(request: PredictRequest):
         'Profit_Margin': fin_features['Profit_Margin'] if fin_features else 0.101995,
         'Revenue_Growth': fin_features['Revenue_Growth'] if fin_features else 0.018416
     }
-    late_stages = ['Series G', 'Series H', 'Series I', 'Series J', 'Subsidiary', 'Unknown']
-    features['Stage'] = 'Late Stage' if features['Stage'] in late_stages else features['Stage']
+    # Valid categories the encoder knows
+    valid_stages = ['Acquired', 'Post-IPO']
+    valid_countries = ['United States']
+    valid_industries = [
+        'Consumer', 'Crypto', 'Data', 'Energy', 'Finance', 'Fitness',
+        'Food', 'HR', 'Hardware', 'Healthcare', 'Infrastructure', 'Legal',
+        'Manufacturing', 'Marketing', 'Media', 'Other', 'Product',
+        'Real Estate', 'Recruiting', 'Retail', 'Sales', 'Security',
+        'Support', 'Transportation', 'Travel'
+    ]
+
+    features['Stage'] = features['Stage'] if features['Stage'] in valid_stages else 'Post-IPO'
+    features['Country'] = features['Country'] if features['Country'] in valid_countries else 'United States'
+    features['Industry'] = features['Industry'] if features['Industry'] in valid_industries else 'Other'
 
     features_df = pd.DataFrame([features])
 
