@@ -177,6 +177,25 @@ def home():
     return {'message': 'Layoff Early Warning System API', 'status': 'running'}
 
 
+@app.get('/health')
+def health():
+    """Lightweight liveness check for uptime monitors (e.g. UptimeRobot)"""
+    return {
+        'status': 'ok',
+        'model_loaded': model is not None,
+        'encoder_loaded': encoder is not None,
+        'explainer_loaded': explainer is not None,
+        'layoffs_rows': len(layoffs_df),
+        'ticker_mapping_rows': len(ticker_mapping)
+    }
+
+
+@app.head('/health')
+def health_head():
+    """HEAD support so monitors can ping without a response body"""
+    return None
+
+
 @app.post('/predict', response_model=PredictResponse)
 def predict(request: PredictRequest):
     company_name = request.company_name.strip()
