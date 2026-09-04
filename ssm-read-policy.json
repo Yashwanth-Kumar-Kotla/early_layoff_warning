@@ -1,0 +1,10 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameters"],
+      "Resource": "arn:aws:ssm:us-east-2:072160582837:parameter/layoff-radar/simfin-api-key"
+    }
+  ]
+}

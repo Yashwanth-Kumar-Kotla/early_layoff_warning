@@ -1,0 +1,33 @@
+{
+  "family": "layoff-radar-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::072160582837:role/layoff-radar-task-execution-role",
+  "taskRoleArn": "arn:aws:iam::072160582837:role/layoff-radar-task-role",
+  "containerDefinitions": [
+    {
+      "name": "layoff-radar-api",
+      "image": "072160582837.dkr.ecr.us-east-2.amazonaws.com/layoff-radar-api:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8000, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "S3_BUCKET_NAME", "value": "layoff-radar-ml-assets-072160582837" }
+      ],
+      "secrets": [
+        { "name": "SIMFIN_API_KEY", "valueFrom": "arn:aws:ssm:us-east-2:072160582837:parameter/layoff-radar/simfin-api-key" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/layoff-radar-api",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

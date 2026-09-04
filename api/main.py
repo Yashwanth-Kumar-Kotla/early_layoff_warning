@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import shap
 import simfin as sf
+import boto3
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -15,6 +16,28 @@ load_dotenv()
 
 # ── Load models ────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+REQUIRED_FILES = [
+    'models/xgb_best_model.pkl',
+    'models/ordinal_encoder.pkl',
+    'models/shap_explainer.pkl',
+    'data/ticker_mapping.csv',
+    'data/layoffs_cleaned.csv',
+]
+
+def ensure_files_from_s3():
+    bucket = os.getenv('S3_BUCKET_NAME')
+    if not bucket:
+        return  # no bucket configured — assume files already exist locally
+    s3 = boto3.client('s3')
+    for relative_path in REQUIRED_FILES:
+        local_path = os.path.join(BASE_DIR, relative_path)
+        if not os.path.exists(local_path):
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            print(f"Fetching {relative_path} from s3://{bucket}...")
+            s3.download_file(bucket, relative_path, local_path)
+
+ensure_files_from_s3()
 
 with open(os.path.join(BASE_DIR, 'models/xgb_best_model.pkl'), 'rb') as f:
     model = pickle.load(f)

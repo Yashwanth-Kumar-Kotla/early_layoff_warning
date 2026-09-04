@@ -31,3 +31,6 @@ seaborn==0.13.2
 matplotlib==3.10.9
 joblib==1.5.3
 tqdm==4.67.3
+
+#AWS
+boto3

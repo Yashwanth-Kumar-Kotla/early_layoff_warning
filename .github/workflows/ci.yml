@@ -113,12 +113,57 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [test, docker-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
-      - name: Trigger FastAPI deploy on Render
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::072160582837:role/layoff-radar-github-deploy-role
+          aws-region: us-east-2
+
+      - name: Log in to ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push FastAPI image
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         run: |
-          curl "${{ secrets.RENDER_FASTAPI_DEPLOY_HOOK }}"
-          echo "✅ FastAPI deploy triggered"
+          docker build -f Dockerfile.api \
+            -t $ECR_REGISTRY/layoff-radar-api:${{ github.sha }} \
+            -t $ECR_REGISTRY/layoff-radar-api:latest .
+          docker push $ECR_REGISTRY/layoff-radar-api:${{ github.sha }}
+          docker push $ECR_REGISTRY/layoff-radar-api:latest
+
+      - name: Register new task definition revision
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        run: |
+          aws ecs describe-task-definition --task-definition layoff-radar-api --region us-east-2 --query 'taskDefinition' | \
+            jq --arg IMAGE "$ECR_REGISTRY/layoff-radar-api:${{ github.sha }}" \
+            'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy) | .containerDefinitions[0].image = $IMAGE | .runtimePlatform = {"cpuArchitecture":"X86_64","operatingSystemFamily":"LINUX"}' \
+            > new-task-def.json
+          aws ecs register-task-definition --cli-input-json file://new-task-def.json --region us-east-2
+
+      - name: Deploy to ECS and wait for it to stabilize
+        run: |
+          aws ecs update-service \
+            --cluster layoff-radar-cluster \
+            --service layoff-radar-service \
+            --task-definition layoff-radar-api \
+            --force-new-deployment \
+            --region us-east-2
+          aws ecs wait services-stable \
+            --cluster layoff-radar-cluster \
+            --services layoff-radar-service \
+            --region us-east-2
 
       - name: Trigger Streamlit deploy on Render
         run: |
